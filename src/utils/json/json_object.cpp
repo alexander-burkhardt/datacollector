@@ -102,4 +102,12 @@ bool json_object::get_bool_or_default(const std::string& key, bool default_value
     return default_value;
 }
 
+json_object json_object::get_object_or_default(const std::string& key, const json_object& default_value) const
+{
+    if (auto ptr = get(key); ptr && ptr->is_object())
+    {
+        return ptr->as_object();
+    }
+    return default_value;
 } // namespace util::json
+}

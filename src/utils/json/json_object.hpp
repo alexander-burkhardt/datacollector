@@ -45,7 +45,8 @@ public:
     std::int64_t get_int_or_default(const std::string& key, std::int64_t default_value = 0) const;
     double get_double_or_default(const std::string& key, double default_value = 0.0) const;
     bool get_bool_or_default(const std::string& key, bool default_value = false) const;
-
+    json_object get_object_or_default(const std::string& key, const json_object& default_value = {}) const;
+    
     template <typename Target>
     std::vector<Target> get_array_property(
         const std::string& key,
