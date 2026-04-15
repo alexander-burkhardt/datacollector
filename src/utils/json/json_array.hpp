@@ -42,6 +42,11 @@ public:
     const value_type* get(size_type index) const noexcept;
     value_type* get(size_type index) noexcept;
 
+    std::string get_string(size_type index) const;
+    std::int64_t get_int(size_type index) const;
+    double get_double(size_type index) const;
+    bool get_bool(size_type index) const;
+
     std::string get_string_or_default(size_type index, const std::string& default_value = {}) const;
     std::int64_t get_int_or_default(size_type index, std::int64_t default_value = 0) const;
     double get_double_or_default(size_type index, double default_value = 0.0) const;

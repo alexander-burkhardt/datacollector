@@ -1,6 +1,7 @@
 #ifndef TESTS_UTILS_JSON_TEST_DATA_HPP
 #define TESTS_UTILS_JSON_TEST_DATA_HPP
 
+#include <cstdint>
 #include <string>
 #include <vector>
 #include "utils/json/json_object.hpp"
@@ -11,7 +12,7 @@ class address {
 private:
     std::string _street;
     std::string _city;
-    int _zip_code;
+    std::int64_t _zip_code;
 
 public:
     address() = default;
@@ -28,13 +29,13 @@ public:
 public:
     const std::string& get_street() const { return _street; }
     const std::string& get_city() const { return _city; }
-    int get_zip_code() const { return _zip_code; }
+    std::int64_t get_zip_code() const { return _zip_code; }
 };
 
 class person {
 private:
     std::string _name;
-    int _age;
+    std::int64_t _age;
     double _height;
     std::vector<std::string> _hobbies;
     address _address;
@@ -55,7 +56,7 @@ public:
 
 public:
     const std::string& get_name() const { return _name; }
-    int get_age() const { return _age; }
+    std::int64_t get_age() const { return _age; }
     double get_height() const { return _height; }
     const std::vector<std::string>& get_hobbies() const { return _hobbies; }
     const address& get_address() const { return _address; }

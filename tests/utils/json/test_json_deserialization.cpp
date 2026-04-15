@@ -121,4 +121,54 @@ TEST_F(test_json_deserialization, wrong_property_type_exception_message_contains
     }
 }
 
+TEST_F(test_json_deserialization, required_getters_return_values) {
+    std::string json_string = R"(
+    {
+        "name": "John Doe",
+        "age": 30,
+        "height": 175.5,
+        "isActive": true,
+        "address": {
+            "street": "123 Main St",
+            "city": "Anytown",
+            "zipCode": 12345
+        }
+    }
+    )";
+
+    auto json_value = util::json::deserialize(json_string);
+    ASSERT_TRUE(json_value.is_object());
+
+    const auto& json_object = json_value.as_object();
+    EXPECT_EQ(json_object.get_string("name"), "John Doe");
+    EXPECT_EQ(json_object.get_int("age"), 30);
+    EXPECT_DOUBLE_EQ(json_object.get_double("height"), 175.5);
+    EXPECT_TRUE(json_object.get_bool("isActive"));
+    EXPECT_EQ(json_object.get_object("address").get_string("city"), "Anytown");
+}
+
+TEST_F(test_json_deserialization, missing_required_property_throws_with_details) {
+    std::string json_string = R"(
+    {
+        "name": "John Doe"
+    }
+    )";
+
+    auto json_value = util::json::deserialize(json_string);
+    ASSERT_TRUE(json_value.is_object());
+
+    try
+    {
+        (void)json_value.as_object().get_int("age");
+        FAIL() << "Expected util::json::json_exception";
+    }
+    catch (const util::json::json_exception& ex)
+    {
+        const std::string message = ex.what();
+        EXPECT_NE(message.find("age"), std::string::npos);
+        EXPECT_NE(message.find("integer"), std::string::npos);
+        EXPECT_NE(message.find("missing"), std::string::npos);
+    }
+}
+
 } // namespace tests::utils::json

@@ -41,6 +41,12 @@ public:
     const value_type& at(const std::string& key) const;
     value_type& operator[](const std::string& key);
 
+    std::string get_string(const std::string& key) const;
+    std::int64_t get_int(const std::string& key) const;
+    double get_double(const std::string& key) const;
+    bool get_bool(const std::string& key) const;
+    json_object get_object(const std::string& key) const;
+
     std::string get_string_or_default(const std::string& key, const std::string& default_value = {}) const;
     std::int64_t get_int_or_default(const std::string& key, std::int64_t default_value = 0) const;
     double get_double_or_default(const std::string& key, double default_value = 0.0) const;

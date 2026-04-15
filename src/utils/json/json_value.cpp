@@ -32,7 +32,7 @@ json_value::json_value(std::int64_t i) : value(i)
 json_value::json_value(double d) : value(d)
 {
 }
-json_value::json_value(int i) : value(static_cast<std::int64_t>(i))
+json_value::json_value(std::int32_t i) : value(static_cast<std::int64_t>(i))
 {
 }
 json_value::json_value(const char* s) : value(std::string(s))

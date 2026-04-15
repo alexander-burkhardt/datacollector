@@ -1,5 +1,15 @@
 #include "json_object.hpp"
 
+namespace
+{
+
+[[noreturn]] void throw_missing_property(const std::string& key, const char* expected)
+{
+    throw util::json::json_exception("Property '" + key + "' expected " + expected + " but got missing");
+}
+
+} // namespace
+
 namespace util::json
 {
 
@@ -64,6 +74,81 @@ const json_object::value_type& json_object::at(const std::string& key) const
 json_object::value_type& json_object::operator[](const std::string& key)
 {
     return values_[key];
+}
+
+std::string json_object::get_string(const std::string& key) const
+{
+    const auto* ptr = get(key);
+    if (!ptr)
+    {
+        throw_missing_property(key, "string");
+    }
+    if (!ptr->is_string())
+    {
+        throw json_exception("Property '" + key + "' expected string but got " + ptr->type_name());
+    }
+
+    return ptr->as_string();
+}
+
+std::int64_t json_object::get_int(const std::string& key) const
+{
+    const auto* ptr = get(key);
+    if (!ptr)
+    {
+        throw_missing_property(key, "integer");
+    }
+    if (!ptr->is_int())
+    {
+        throw json_exception("Property '" + key + "' expected integer but got " + ptr->type_name());
+    }
+
+    return ptr->as_int();
+}
+
+double json_object::get_double(const std::string& key) const
+{
+    const auto* ptr = get(key);
+    if (!ptr)
+    {
+        throw_missing_property(key, "number");
+    }
+    if (!ptr->is_number())
+    {
+        throw json_exception("Property '" + key + "' expected number but got " + ptr->type_name());
+    }
+
+    return ptr->as_number();
+}
+
+bool json_object::get_bool(const std::string& key) const
+{
+    const auto* ptr = get(key);
+    if (!ptr)
+    {
+        throw_missing_property(key, "bool");
+    }
+    if (!ptr->is_bool())
+    {
+        throw json_exception("Property '" + key + "' expected bool but got " + ptr->type_name());
+    }
+
+    return ptr->as_bool();
+}
+
+json_object json_object::get_object(const std::string& key) const
+{
+    const auto* ptr = get(key);
+    if (!ptr)
+    {
+        throw_missing_property(key, "object");
+    }
+    if (!ptr->is_object())
+    {
+        throw json_exception("Property '" + key + "' expected object but got " + ptr->type_name());
+    }
+
+    return ptr->as_object();
 }
 
 std::string json_object::get_string_or_default(const std::string& key, const std::string& default_value) const

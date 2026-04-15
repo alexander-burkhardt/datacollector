@@ -24,7 +24,7 @@ public:
     json_value(bool b);
     json_value(std::int64_t i);
     json_value(double d);
-    json_value(int i);
+    json_value(std::int32_t i);
     json_value(const char* s);
     json_value(const std::string& s);
     json_value(std::string&& s);

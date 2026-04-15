@@ -1,6 +1,7 @@
 #include "json_serializer.hpp"
 #include "json_array.hpp"
 #include "json_object.hpp"
+#include <cstdint>
 #include <iomanip>
 #include <limits>
 #include <sstream>
@@ -29,7 +30,7 @@ std::string escape_string(const std::string& value)
                 if (static_cast<unsigned char>(ch) < 0x20)
                 {
                     out << "\\u" << std::hex << std::setw(4) << std::setfill('0')
-                        << static_cast<int>(static_cast<unsigned char>(ch)) << std::dec;
+                        << static_cast<std::uint32_t>(static_cast<unsigned char>(ch)) << std::dec;
                 }
                 else
                 {
@@ -41,9 +42,9 @@ std::string escape_string(const std::string& value)
     return out.str();
 }
 
-std::string serialize_value(const json_value& value, int indent_level, bool pretty);
+std::string serialize_value(const json_value& value, std::int32_t indent_level, bool pretty);
 
-std::string serialize_object(const json_object& object, int indent_level, bool pretty)
+std::string serialize_object(const json_object& object, std::int32_t indent_level, bool pretty)
 {
     if (object.empty())
     {
@@ -85,7 +86,7 @@ std::string serialize_object(const json_object& object, int indent_level, bool p
     return out.str();
 }
 
-std::string serialize_array(const json_array& array, int indent_level, bool pretty)
+std::string serialize_array(const json_array& array, std::int32_t indent_level, bool pretty)
 {
     if (array.empty())
     {
@@ -126,7 +127,7 @@ std::string serialize_array(const json_array& array, int indent_level, bool pret
     return out.str();
 }
 
-std::string serialize_value(const json_value& value, int indent_level, bool pretty)
+std::string serialize_value(const json_value& value, std::int32_t indent_level, bool pretty)
 {
     switch (value.value.index())
     {

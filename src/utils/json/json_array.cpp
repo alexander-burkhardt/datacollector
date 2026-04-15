@@ -1,5 +1,15 @@
 #include "json_array.hpp"
 
+namespace
+{
+
+[[noreturn]] void throw_missing_element(std::size_t index, const char* expected)
+{
+    throw util::json::json_exception("JSON array element at index " + std::to_string(index) + " expected " + expected + " but got missing");
+}
+
+} // namespace
+
 namespace util::json
 {
 
@@ -72,6 +82,66 @@ const json_array::value_type* json_array::get(size_type index) const noexcept
 json_array::value_type* json_array::get(size_type index) noexcept
 {
     return index < values_.size() ? &values_[index] : nullptr;
+}
+
+std::string json_array::get_string(size_type index) const
+{
+    const auto* ptr = get(index);
+    if (!ptr)
+    {
+        throw_missing_element(index, "string");
+    }
+    if (!ptr->is_string())
+    {
+        throw json_exception("JSON array element at index " + std::to_string(index) + " expected string but got " + ptr->type_name());
+    }
+
+    return ptr->as_string();
+}
+
+std::int64_t json_array::get_int(size_type index) const
+{
+    const auto* ptr = get(index);
+    if (!ptr)
+    {
+        throw_missing_element(index, "integer");
+    }
+    if (!ptr->is_int())
+    {
+        throw json_exception("JSON array element at index " + std::to_string(index) + " expected integer but got " + ptr->type_name());
+    }
+
+    return ptr->as_int();
+}
+
+double json_array::get_double(size_type index) const
+{
+    const auto* ptr = get(index);
+    if (!ptr)
+    {
+        throw_missing_element(index, "number");
+    }
+    if (!ptr->is_number())
+    {
+        throw json_exception("JSON array element at index " + std::to_string(index) + " expected number but got " + ptr->type_name());
+    }
+
+    return ptr->as_number();
+}
+
+bool json_array::get_bool(size_type index) const
+{
+    const auto* ptr = get(index);
+    if (!ptr)
+    {
+        throw_missing_element(index, "bool");
+    }
+    if (!ptr->is_bool())
+    {
+        throw json_exception("JSON array element at index " + std::to_string(index) + " expected bool but got " + ptr->type_name());
+    }
+
+    return ptr->as_bool();
 }
 
 std::string json_array::get_string_or_default(size_type index, const std::string& default_value) const
