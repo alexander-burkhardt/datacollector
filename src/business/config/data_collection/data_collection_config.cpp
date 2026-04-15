@@ -9,8 +9,8 @@ namespace business::config::data_collection
 
 data_collection_config::data_collection_config(
     const std::string& configurationName,
-    const std::vector<std::shared_ptr<trigger_config>>& triggers,
-    const std::vector<std::shared_ptr<read_config>>& reads)
+    const std::vector<std::shared_ptr<const trigger_config>>& triggers,
+    const std::vector<std::shared_ptr<const read_config>>& reads)
     : _configurationName(configurationName),
       _triggers(triggers),
       _reads(reads)
@@ -19,13 +19,13 @@ data_collection_config::data_collection_config(
 
 data_collection_config::data_collection_config(const util::json::json_object& obj)
     : _configurationName(obj.get_string("configurationName")),
-      _triggers(obj.get_array_property<std::shared_ptr<trigger_config>>(
+      _triggers(obj.get_array_property<std::shared_ptr<const trigger_config>>(
           "triggers",
           [](const util::json::json_value& value)
           {
               return trigger_config_factory::create(value.as_object());
           })),
-      _reads(obj.get_array_property<std::shared_ptr<read_config>>(
+      _reads(obj.get_array_property<std::shared_ptr<const read_config>>(
           "reads",
           [](const util::json::json_value& value)
           {
@@ -39,12 +39,12 @@ const std::string& data_collection_config::get_configuration_name() const
     return _configurationName;
 }
 
-const std::vector<std::shared_ptr<trigger_config>>& data_collection_config::get_triggers() const
+const std::vector<std::shared_ptr<const trigger_config>>& data_collection_config::get_triggers() const
 {
     return _triggers;
 }
 
-const std::vector<std::shared_ptr<read_config>>& data_collection_config::get_reads() const
+const std::vector<std::shared_ptr<const read_config>>& data_collection_config::get_reads() const
 {
     return _reads;
 }

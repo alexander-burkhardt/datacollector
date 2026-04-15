@@ -13,8 +13,8 @@ namespace business::config::data_collection
 class trigger_config
 {
 private:
-    std::string _triggerName;
-    std::string _triggerType;
+    const std::string _triggerName;
+    const std::string _triggerType;
 
 protected:
     void write_json_properties(util::json::json_writer& writer) const;
@@ -25,9 +25,9 @@ public:
 
     trigger_config(const trigger_config&) = default;
     virtual ~trigger_config() = default;
-    trigger_config& operator=(const trigger_config&) = default;
+    trigger_config& operator=(const trigger_config&) = delete;
     trigger_config(trigger_config&&) = default;
-    trigger_config& operator=(trigger_config&&) = default;
+    trigger_config& operator=(trigger_config&&) = delete;
 
     const std::string& get_trigger_name() const;
     const std::string& get_trigger_type() const;

@@ -11,7 +11,7 @@ namespace business::config::data_collection
 class trigger_config_factory
 {
 public:
-    static std::shared_ptr<trigger_config> create(const util::json::json_object& obj);
+    static std::shared_ptr<const trigger_config> create(const util::json::json_object& obj);
 };
 
 } // namespace business::config::data_collection

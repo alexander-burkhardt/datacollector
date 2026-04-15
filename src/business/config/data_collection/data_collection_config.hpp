@@ -16,27 +16,27 @@ namespace business::config::data_collection
 class data_collection_config
 {
 private:
-    std::string _configurationName;
-    std::vector<std::shared_ptr<trigger_config>> _triggers;
-    std::vector<std::shared_ptr<read_config>> _reads;
+    const std::string _configurationName;
+    const std::vector<std::shared_ptr<const trigger_config>> _triggers;
+    const std::vector<std::shared_ptr<const read_config>> _reads;
 
 public:
     data_collection_config(
         const std::string& configurationName,
-        const std::vector<std::shared_ptr<trigger_config>>& triggers = {},
-        const std::vector<std::shared_ptr<read_config>>& reads = {});
+        const std::vector<std::shared_ptr<const trigger_config>>& triggers = {},
+        const std::vector<std::shared_ptr<const read_config>>& reads = {});
 
     explicit data_collection_config(const util::json::json_object& obj);
 
     data_collection_config(const data_collection_config&) = default;
     ~data_collection_config() = default;
-    data_collection_config& operator=(const data_collection_config&) = default;
+    data_collection_config& operator=(const data_collection_config&) = delete;
     data_collection_config(data_collection_config&&) = default;
-    data_collection_config& operator=(data_collection_config&&) = default;
+    data_collection_config& operator=(data_collection_config&&) = delete;
 
     const std::string& get_configuration_name() const;
-    const std::vector<std::shared_ptr<trigger_config>>& get_triggers() const;
-    const std::vector<std::shared_ptr<read_config>>& get_reads() const;
+    const std::vector<std::shared_ptr<const trigger_config>>& get_triggers() const;
+    const std::vector<std::shared_ptr<const read_config>>& get_reads() const;
 
     std::vector<std::string> validate() const;
 

@@ -13,9 +13,9 @@ namespace business::config::data_collection
 class read_config
 {
 private:
-    std::string _name;
-    std::vector<variable_config> _variables;
-    std::vector<std::string> _triggers;
+    const std::string _name;
+    const std::vector<variable_config> _variables;
+    const std::vector<std::string> _triggers;
 
 public:
     read_config(
@@ -26,9 +26,9 @@ public:
 
     read_config(const read_config&) = default;
     ~read_config() = default;
-    read_config& operator=(const read_config&) = default;
+    read_config& operator=(const read_config&) = delete;
     read_config(read_config&&) = default;
-    read_config& operator=(read_config&&) = default;
+    read_config& operator=(read_config&&) = delete;
 
     const std::string& get_name() const;
     const std::vector<variable_config>& get_variables() const;

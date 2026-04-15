@@ -13,7 +13,7 @@ namespace business::config::data_collection
 class cyclic_trigger_config : public trigger_config
 {
 private:
-    std::int32_t _frequencyInSeconds;
+    const std::int32_t _frequencyInSeconds;
 
 public:
     cyclic_trigger_config(const std::string& triggerName, std::int32_t frequencyInSeconds);
@@ -21,9 +21,9 @@ public:
 
     cyclic_trigger_config(const cyclic_trigger_config&) = default;
     ~cyclic_trigger_config() override = default;
-    cyclic_trigger_config& operator=(const cyclic_trigger_config&) = default;
+    cyclic_trigger_config& operator=(const cyclic_trigger_config&) = delete;
     cyclic_trigger_config(cyclic_trigger_config&&) = default;
-    cyclic_trigger_config& operator=(cyclic_trigger_config&&) = default;
+    cyclic_trigger_config& operator=(cyclic_trigger_config&&) = delete;
 
     static std::string type_name();
 

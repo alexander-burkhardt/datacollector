@@ -7,7 +7,7 @@
 namespace business::config::data_collection
 {
 
-std::shared_ptr<trigger_config> trigger_config_factory::create(const util::json::json_object& obj)
+std::shared_ptr<const trigger_config> trigger_config_factory::create(const util::json::json_object& obj)
 {
     const std::string triggerType = obj.get_string("triggerType");
 

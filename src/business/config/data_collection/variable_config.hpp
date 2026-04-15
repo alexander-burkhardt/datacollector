@@ -13,8 +13,8 @@ namespace business::config::data_collection
 class variable_config
 {
 private:
-    std::string _variableName;
-    std::string _targetAddress;
+    const std::string _variableName;
+    const std::string _targetAddress;
 
 public:
     variable_config(const std::string& variableName, const std::string& targetAddress);
@@ -22,9 +22,9 @@ public:
 
     variable_config(const variable_config&) = default;
     ~variable_config() = default;
-    variable_config& operator=(const variable_config&) = default;
+    variable_config& operator=(const variable_config&) = delete;
     variable_config(variable_config&&) = default;
-    variable_config& operator=(variable_config&&) = default;
+    variable_config& operator=(variable_config&&) = delete;
 
     const std::string& get_variable_name() const;
     const std::string& get_target_address() const;

@@ -79,13 +79,13 @@ TEST(test_data_collection_config, deserialize_creates_correct_trigger_types)
     ASSERT_EQ(config.get_triggers().size(), 2U);
     ASSERT_EQ(config.get_reads().size(), 1U);
 
-    const auto cyclic = std::dynamic_pointer_cast<::business::config::data_collection::cyclic_trigger_config>(config.get_triggers()[0]);
+    const auto cyclic = std::dynamic_pointer_cast<const ::business::config::data_collection::cyclic_trigger_config>(config.get_triggers()[0]);
     ASSERT_NE(cyclic, nullptr);
     EXPECT_EQ(cyclic->get_trigger_name(), "TimerTrigger");
     EXPECT_EQ(cyclic->get_trigger_type(), "cyclic");
     EXPECT_EQ(cyclic->get_frequency_in_seconds(), 60);
 
-    const auto onchange = std::dynamic_pointer_cast<::business::config::data_collection::onchange_trigger_config>(config.get_triggers()[1]);
+    const auto onchange = std::dynamic_pointer_cast<const ::business::config::data_collection::onchange_trigger_config>(config.get_triggers()[1]);
     ASSERT_NE(onchange, nullptr);
     EXPECT_EQ(onchange->get_trigger_name(), "ChangeTrigger");
     EXPECT_EQ(onchange->get_trigger_type(), "onchange");

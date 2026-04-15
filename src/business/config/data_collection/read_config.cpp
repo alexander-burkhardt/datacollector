@@ -7,20 +7,20 @@ read_config::read_config(
     const std::string& name,
     const std::vector<variable_config>& variables,
     const std::vector<std::string>& triggers)
-    : _variables(variables),
-      _name(name),
+    : _name(name),
+      _variables(variables),
       _triggers(triggers)
 {
 }
 
 read_config::read_config(const util::json::json_object& obj)
-    : _variables(obj.get_array_property<variable_config>(
+    : _name(obj.get_string("name")),
+      _variables(obj.get_array_property<variable_config>(
           "variables",
           [](const util::json::json_value& value)
           {
               return variable_config(value.as_object());
           })),
-      _name(obj.get_string("name")),
       _triggers(obj.get_array_property<std::string>(
           "triggers",
           [](const util::json::json_value& value)

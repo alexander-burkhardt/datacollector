@@ -13,7 +13,7 @@ namespace business::config::data_collection
 class onchange_trigger_config : public trigger_config
 {
 private:
-    std::vector<std::string> _targetAddresses;
+    const std::vector<std::string> _targetAddresses;
 
 public:
     onchange_trigger_config(const std::string& triggerName, const std::vector<std::string>& targetAddresses);
@@ -21,9 +21,9 @@ public:
 
     onchange_trigger_config(const onchange_trigger_config&) = default;
     ~onchange_trigger_config() override = default;
-    onchange_trigger_config& operator=(const onchange_trigger_config&) = default;
+    onchange_trigger_config& operator=(const onchange_trigger_config&) = delete;
     onchange_trigger_config(onchange_trigger_config&&) = default;
-    onchange_trigger_config& operator=(onchange_trigger_config&&) = default;
+    onchange_trigger_config& operator=(onchange_trigger_config&&) = delete;
 
     static std::string type_name();
 
