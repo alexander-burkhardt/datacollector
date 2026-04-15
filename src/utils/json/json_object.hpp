@@ -3,6 +3,7 @@
 
 #include "json_value.hpp"
 #include "json_array.hpp"
+#include "json_integer.hpp"
 #include <functional>
 #include <initializer_list>
 #include <map>
@@ -41,11 +42,33 @@ public:
     bool get_bool(const std::string& key) const;
     json_object get_object(const std::string& key) const;
 
+    template <typename IntegerType>
+    IntegerType get_integer(const std::string& key) const
+    {
+        return checked_integer_cast<IntegerType>(get_int(key), "Property '" + key + "'");
+    }
+
     std::string get_string_or_default(const std::string& key, const std::string& default_value = {}) const;
     std::int64_t get_int_or_default(const std::string& key, std::int64_t default_value = 0) const;
     double get_double_or_default(const std::string& key, double default_value = 0.0) const;
     bool get_bool_or_default(const std::string& key, bool default_value = false) const;
     json_object get_object_or_default(const std::string& key, const json_object& default_value = {}) const;
+
+    template <typename IntegerType>
+    IntegerType get_integer_or_default(const std::string& key, IntegerType default_value = 0) const
+    {
+        const auto* ptr = get(key);
+        if (!ptr)
+        {
+            return default_value;
+        }
+        if (!ptr->is_int())
+        {
+            throw json_exception("Property '" + key + "' expected integer but got " + ptr->type_name());
+        }
+
+        return checked_integer_cast<IntegerType>(ptr->as_int(), "Property '" + key + "'");
+    }
     
     template <typename Target>
     std::vector<Target> get_array_property(

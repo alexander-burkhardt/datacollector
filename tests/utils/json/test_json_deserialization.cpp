@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <limits>
 #include "utils/json/json_deserializer.hpp"
 #include "utils/json/json_object.hpp"
 #include "test_data.hpp"
@@ -168,6 +169,43 @@ TEST_F(test_json_deserialization, missing_required_property_throws_with_details)
         EXPECT_NE(message.find("age"), std::string::npos);
         EXPECT_NE(message.find("integer"), std::string::npos);
         EXPECT_NE(message.find("missing"), std::string::npos);
+    }
+}
+
+TEST_F(test_json_deserialization, templated_integer_getter_converts_to_requested_type) {
+    std::string json_string = R"(
+    {
+        "age": 30
+    }
+    )";
+
+    auto json_value = util::json::deserialize(json_string);
+    ASSERT_TRUE(json_value.is_object());
+
+    const auto age = json_value.as_object().get_integer<std::int32_t>("age");
+    EXPECT_EQ(age, static_cast<std::int32_t>(30));
+}
+
+TEST_F(test_json_deserialization, templated_integer_getter_throws_when_out_of_range) {
+    const std::string json_string = R"(
+    {
+        "age": 2147483648
+    }
+    )";
+
+    const auto json_value = util::json::deserialize(json_string);
+    ASSERT_TRUE(json_value.is_object());
+
+    try
+    {
+        (void)json_value.as_object().get_integer<std::int32_t>("age");
+        FAIL() << "Expected util::json::json_exception";
+    }
+    catch (const util::json::json_exception& ex)
+    {
+        const std::string message = ex.what();
+        EXPECT_NE(message.find("age"), std::string::npos);
+        EXPECT_NE(message.find("int32"), std::string::npos);
     }
 }
 
