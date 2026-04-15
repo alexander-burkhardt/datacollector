@@ -13,13 +13,13 @@ namespace
 namespace util::json
 {
 
-json_array::json_array(std::initializer_list<value_type> init) : values_(init)
+json_array::json_array(std::initializer_list<json_value> init) : values_(init)
 {
 }
-json_array::json_array(const container_type& values) : values_(values)
+json_array::json_array(const std::vector<json_value>& values) : values_(values)
 {
 }
-json_array::json_array(container_type&& values) noexcept : values_(std::move(values))
+json_array::json_array(std::vector<json_value>&& values) noexcept : values_(std::move(values))
 {
 }
 
@@ -27,64 +27,64 @@ bool json_array::empty() const noexcept
 {
     return values_.empty();
 }
-json_array::size_type json_array::size() const noexcept
+std::size_t json_array::size() const noexcept
 {
     return values_.size();
 }
 
-json_array::const_iterator json_array::begin() const noexcept
+std::vector<json_value>::const_iterator json_array::begin() const noexcept
 {
     return values_.begin();
 }
-json_array::const_iterator json_array::end() const noexcept
+std::vector<json_value>::const_iterator json_array::end() const noexcept
 {
     return values_.end();
 }
-json_array::iterator json_array::begin() noexcept
+std::vector<json_value>::iterator json_array::begin() noexcept
 {
     return values_.begin();
 }
-json_array::iterator json_array::end() noexcept
+std::vector<json_value>::iterator json_array::end() noexcept
 {
     return values_.end();
 }
 
-const json_array::value_type& json_array::operator[](size_type index) const
+const json_value& json_array::operator[](std::size_t index) const
 {
     return values_[index];
 }
-json_array::value_type& json_array::operator[](size_type index)
+json_value& json_array::operator[](std::size_t index)
 {
     return values_[index];
 }
-const json_array::value_type& json_array::at(size_type index) const
+const json_value& json_array::at(std::size_t index) const
 {
     return values_.at(index);
 }
-json_array::value_type& json_array::at(size_type index)
+json_value& json_array::at(std::size_t index)
 {
     return values_.at(index);
 }
 
-void json_array::push_back(const value_type& value)
+void json_array::push_back(const json_value& value)
 {
     values_.push_back(value);
 }
-void json_array::push_back(value_type&& value)
+void json_array::push_back(json_value&& value)
 {
     values_.push_back(std::move(value));
 }
 
-const json_array::value_type* json_array::get(size_type index) const noexcept
+const json_value* json_array::get(std::size_t index) const noexcept
 {
     return index < values_.size() ? &values_[index] : nullptr;
 }
-json_array::value_type* json_array::get(size_type index) noexcept
+json_value* json_array::get(std::size_t index) noexcept
 {
     return index < values_.size() ? &values_[index] : nullptr;
 }
 
-std::string json_array::get_string(size_type index) const
+std::string json_array::get_string(std::size_t index) const
 {
     const auto* ptr = get(index);
     if (!ptr)
@@ -99,7 +99,7 @@ std::string json_array::get_string(size_type index) const
     return ptr->as_string();
 }
 
-std::int64_t json_array::get_int(size_type index) const
+std::int64_t json_array::get_int(std::size_t index) const
 {
     const auto* ptr = get(index);
     if (!ptr)
@@ -114,7 +114,7 @@ std::int64_t json_array::get_int(size_type index) const
     return ptr->as_int();
 }
 
-double json_array::get_double(size_type index) const
+double json_array::get_double(std::size_t index) const
 {
     const auto* ptr = get(index);
     if (!ptr)
@@ -129,7 +129,7 @@ double json_array::get_double(size_type index) const
     return ptr->as_number();
 }
 
-bool json_array::get_bool(size_type index) const
+bool json_array::get_bool(std::size_t index) const
 {
     const auto* ptr = get(index);
     if (!ptr)
@@ -144,7 +144,7 @@ bool json_array::get_bool(size_type index) const
     return ptr->as_bool();
 }
 
-std::string json_array::get_string_or_default(size_type index, const std::string& default_value) const
+std::string json_array::get_string_or_default(std::size_t index, const std::string& default_value) const
 {
     const auto* ptr = get(index);
     if (!ptr)
@@ -159,7 +159,7 @@ std::string json_array::get_string_or_default(size_type index, const std::string
     return ptr->as_string();
 }
 
-std::int64_t json_array::get_int_or_default(size_type index, std::int64_t default_value) const
+std::int64_t json_array::get_int_or_default(std::size_t index, std::int64_t default_value) const
 {
     const auto* ptr = get(index);
     if (!ptr)
@@ -174,7 +174,7 @@ std::int64_t json_array::get_int_or_default(size_type index, std::int64_t defaul
     return ptr->as_int();
 }
 
-double json_array::get_double_or_default(size_type index, double default_value) const
+double json_array::get_double_or_default(std::size_t index, double default_value) const
 {
     const auto* ptr = get(index);
     if (!ptr)
@@ -189,7 +189,7 @@ double json_array::get_double_or_default(size_type index, double default_value) 
     return ptr->as_number();
 }
 
-bool json_array::get_bool_or_default(size_type index, bool default_value) const
+bool json_array::get_bool_or_default(std::size_t index, bool default_value) const
 {
     const auto* ptr = get(index);
     if (!ptr)

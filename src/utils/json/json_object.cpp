@@ -13,13 +13,13 @@ namespace
 namespace util::json
 {
 
-json_object::json_object(std::initializer_list<container_type::value_type> init) : values_(init)
+json_object::json_object(std::initializer_list<std::pair<const std::string, json_value>> init) : values_(init)
 {
 }
-json_object::json_object(const container_type& values) : values_(values)
+json_object::json_object(const std::map<std::string, json_value>& values) : values_(values)
 {
 }
-json_object::json_object(container_type&& values) noexcept : values_(std::move(values))
+json_object::json_object(std::map<std::string, json_value>&& values) noexcept : values_(std::move(values))
 {
 }
 
@@ -27,24 +27,24 @@ bool json_object::empty() const noexcept
 {
     return values_.empty();
 }
-json_object::size_type json_object::size() const noexcept
+std::size_t json_object::size() const noexcept
 {
     return values_.size();
 }
 
-json_object::const_iterator json_object::begin() const noexcept
+std::map<std::string, json_value>::const_iterator json_object::begin() const noexcept
 {
     return values_.begin();
 }
-json_object::const_iterator json_object::end() const noexcept
+std::map<std::string, json_value>::const_iterator json_object::end() const noexcept
 {
     return values_.end();
 }
-json_object::iterator json_object::begin() noexcept
+std::map<std::string, json_value>::iterator json_object::begin() noexcept
 {
     return values_.begin();
 }
-json_object::iterator json_object::end() noexcept
+std::map<std::string, json_value>::iterator json_object::end() noexcept
 {
     return values_.end();
 }
@@ -54,24 +54,24 @@ bool json_object::contains(const std::string& key) const noexcept
     return values_.find(key) != values_.end();
 }
 
-const json_object::value_type* json_object::get(const std::string& key) const noexcept
+const json_value* json_object::get(const std::string& key) const noexcept
 {
     auto it = values_.find(key);
     return it == values_.end() ? nullptr : &it->second;
 }
 
-json_object::value_type* json_object::get(const std::string& key) noexcept
+json_value* json_object::get(const std::string& key) noexcept
 {
     auto it = values_.find(key);
     return it == values_.end() ? nullptr : &it->second;
 }
 
-const json_object::value_type& json_object::at(const std::string& key) const
+const json_value& json_object::at(const std::string& key) const
 {
     return values_.at(key);
 }
 
-json_object::value_type& json_object::operator[](const std::string& key)
+json_value& json_object::operator[](const std::string& key)
 {
     return values_[key];
 }

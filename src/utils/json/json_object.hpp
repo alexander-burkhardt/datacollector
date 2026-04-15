@@ -16,30 +16,24 @@ namespace util::json
 class json_object
 {
 public:
-    using value_type = json_value;
-    using container_type = std::map<std::string, value_type>;
-    using iterator = container_type::iterator;
-    using const_iterator = container_type::const_iterator;
-    using size_type = container_type::size_type;
-
     json_object() = default;
-    json_object(std::initializer_list<typename container_type::value_type> init);
-    json_object(const container_type& values);
-    json_object(container_type&& values) noexcept;
+    json_object(std::initializer_list<std::pair<const std::string, json_value>> init);
+    json_object(const std::map<std::string, json_value>& values);
+    json_object(std::map<std::string, json_value>&& values) noexcept;
 
     bool empty() const noexcept;
-    size_type size() const noexcept;
+    std::size_t size() const noexcept;
 
-    const_iterator begin() const noexcept;
-    const_iterator end() const noexcept;
-    iterator begin() noexcept;
-    iterator end() noexcept;
+    std::map<std::string, json_value>::const_iterator begin() const noexcept;
+    std::map<std::string, json_value>::const_iterator end() const noexcept;
+    std::map<std::string, json_value>::iterator begin() noexcept;
+    std::map<std::string, json_value>::iterator end() noexcept;
 
     bool contains(const std::string& key) const noexcept;
-    const value_type* get(const std::string& key) const noexcept;
-    value_type* get(const std::string& key) noexcept;
-    const value_type& at(const std::string& key) const;
-    value_type& operator[](const std::string& key);
+    const json_value* get(const std::string& key) const noexcept;
+    json_value* get(const std::string& key) noexcept;
+    const json_value& at(const std::string& key) const;
+    json_value& operator[](const std::string& key);
 
     std::string get_string(const std::string& key) const;
     std::int64_t get_int(const std::string& key) const;
@@ -100,13 +94,13 @@ public:
     }
 
     template <typename... Args>
-    std::pair<iterator, bool> emplace(Args&&... args)
+    std::pair<std::map<std::string, json_value>::iterator, bool> emplace(Args&&... args)
     {
         return values_.emplace(std::forward<Args>(args)...);
     }
 
 private:
-    container_type values_;
+    std::map<std::string, json_value> values_;
 };
 
 } // namespace util::json
