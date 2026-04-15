@@ -1,6 +1,7 @@
 #ifndef UTIL_JSON_JSON_VALUE_HPP
 #define UTIL_JSON_JSON_VALUE_HPP
 
+#include "json_exception.hpp"
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -40,6 +41,8 @@ public:
     bool is_string() const noexcept;
     bool is_array() const noexcept;
     bool is_object() const noexcept;
+
+    std::string type_name() const;
 
     bool as_bool() const;
     std::int64_t as_int() const;

@@ -1,7 +1,6 @@
-#include <iostream>
+#include <gtest/gtest.h>
 
-int main()
+TEST(SmokeTest, TestRunnerExecutes)
 {
-    std::cout << "Test running!" << std::endl;
-    return 0;
+    SUCCEED();
 }

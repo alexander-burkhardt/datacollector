@@ -54,14 +54,21 @@ public:
     {
         std::vector<Target> result;
 
-        if (auto ptr = get(key); ptr && ptr->is_array())
+        const auto* ptr = get(key);
+        if (!ptr)
         {
-            const auto& array = ptr->as_array();
-            result.reserve(array.size());
-            for (const auto& item : array)
-            {
-                result.push_back(converter(item));
-            }
+            return result;
+        }
+        if (!ptr->is_array())
+        {
+            throw json_exception("Property '" + key + "' is not an array");
+        }
+
+        const auto& array = ptr->as_array();
+        result.reserve(array.size());
+        for (const auto& item : array)
+        {
+            result.push_back(converter(item));
         }
 
         return result;
@@ -73,12 +80,17 @@ public:
         const std::function<Target(const json_object&)>& converter,
         const Target& default_value = {}) const
     {
-        if (auto ptr = get(key); ptr && ptr->is_object())
+        const auto* ptr = get(key);
+        if (!ptr)
         {
-            return converter(ptr->as_object());
+            return default_value;
+        }
+        if (!ptr->is_object())
+        {
+            throw json_exception("Property '" + key + "' is not an object");
         }
 
-        return default_value;
+        return converter(ptr->as_object());
     }
 
     template <typename... Args>

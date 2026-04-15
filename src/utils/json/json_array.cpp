@@ -76,38 +76,62 @@ json_array::value_type* json_array::get(size_type index) noexcept
 
 std::string json_array::get_string_or_default(size_type index, const std::string& default_value) const
 {
-    if (auto ptr = get(index); ptr && ptr->is_string())
+    const auto* ptr = get(index);
+    if (!ptr)
     {
-        return ptr->as_string();
+        return default_value;
     }
-    return default_value;
+    if (!ptr->is_string())
+    {
+        throw json_exception("JSON array element at index " + std::to_string(index) + " expected string but got " + ptr->type_name());
+    }
+
+    return ptr->as_string();
 }
 
 std::int64_t json_array::get_int_or_default(size_type index, std::int64_t default_value) const
 {
-    if (auto ptr = get(index); ptr && ptr->is_int())
+    const auto* ptr = get(index);
+    if (!ptr)
     {
-        return ptr->as_int();
+        return default_value;
     }
-    return default_value;
+    if (!ptr->is_int())
+    {
+        throw json_exception("JSON array element at index " + std::to_string(index) + " expected integer but got " + ptr->type_name());
+    }
+
+    return ptr->as_int();
 }
 
 double json_array::get_double_or_default(size_type index, double default_value) const
 {
-    if (auto ptr = get(index); ptr && ptr->is_number())
+    const auto* ptr = get(index);
+    if (!ptr)
     {
-        return ptr->as_number();
+        return default_value;
     }
-    return default_value;
+    if (!ptr->is_number())
+    {
+        throw json_exception("JSON array element at index " + std::to_string(index) + " expected number but got " + ptr->type_name());
+    }
+
+    return ptr->as_number();
 }
 
 bool json_array::get_bool_or_default(size_type index, bool default_value) const
 {
-    if (auto ptr = get(index); ptr && ptr->is_bool())
+    const auto* ptr = get(index);
+    if (!ptr)
     {
-        return ptr->as_bool();
+        return default_value;
     }
-    return default_value;
+    if (!ptr->is_bool())
+    {
+        throw json_exception("JSON array element at index " + std::to_string(index) + " expected bool but got " + ptr->type_name());
+    }
+
+    return ptr->as_bool();
 }
 
 } // namespace util::json

@@ -68,46 +68,77 @@ json_object::value_type& json_object::operator[](const std::string& key)
 
 std::string json_object::get_string_or_default(const std::string& key, const std::string& default_value) const
 {
-    if (auto ptr = get(key); ptr && ptr->is_string())
+    const auto* ptr = get(key);
+    if (!ptr)
     {
-        return ptr->as_string();
+        return default_value;
     }
-    return default_value;
+    if (!ptr->is_string())
+    {
+        throw json_exception("Property '" + key + "' expected string but got " + ptr->type_name());
+    }
+
+    return ptr->as_string();
 }
 
 std::int64_t json_object::get_int_or_default(const std::string& key, std::int64_t default_value) const
 {
-    if (auto ptr = get(key); ptr && ptr->is_int())
+    const auto* ptr = get(key);
+    if (!ptr)
     {
-        return ptr->as_int();
+        return default_value;
     }
-    return default_value;
+    if (!ptr->is_int())
+    {
+        throw json_exception("Property '" + key + "' expected integer but got " + ptr->type_name());
+    }
+
+    return ptr->as_int();
 }
 
 double json_object::get_double_or_default(const std::string& key, double default_value) const
 {
-    if (auto ptr = get(key); ptr && ptr->is_number())
+    const auto* ptr = get(key);
+    if (!ptr)
     {
-        return ptr->as_number();
+        return default_value;
     }
-    return default_value;
+    if (!ptr->is_number())
+    {
+        throw json_exception("Property '" + key + "' expected number but got " + ptr->type_name());
+    }
+
+    return ptr->as_number();
 }
 
 bool json_object::get_bool_or_default(const std::string& key, bool default_value) const
 {
-    if (auto ptr = get(key); ptr && ptr->is_bool())
+    const auto* ptr = get(key);
+    if (!ptr)
     {
-        return ptr->as_bool();
+        return default_value;
     }
-    return default_value;
+    if (!ptr->is_bool())
+    {
+        throw json_exception("Property '" + key + "' expected bool but got " + ptr->type_name());
+    }
+
+    return ptr->as_bool();
 }
 
 json_object json_object::get_object_or_default(const std::string& key, const json_object& default_value) const
 {
-    if (auto ptr = get(key); ptr && ptr->is_object())
+    const auto* ptr = get(key);
+    if (!ptr)
     {
-        return ptr->as_object();
+        return default_value;
     }
-    return default_value;
-} // namespace util::json
+    if (!ptr->is_object())
+    {
+        throw json_exception("Property '" + key + "' expected object but got " + ptr->type_name());
+    }
+
+    return ptr->as_object();
 }
+
+} // namespace util::json
