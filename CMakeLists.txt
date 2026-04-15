@@ -16,8 +16,8 @@ find_package(GTest CONFIG REQUIRED)
 include(GoogleTest)
 
 # Recursively collect all .cpp files from src/
-file(GLOB_RECURSE SOURCES "src/*.cpp")
-file(GLOB_RECURSE IMPL_SOURCES "src/*.cpp")
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "src/*.cpp")
+file(GLOB_RECURSE IMPL_SOURCES CONFIGURE_DEPENDS "src/*.cpp")
 list(FILTER IMPL_SOURCES EXCLUDE REGEX "src/main\\.cpp$")
 
 # Create executable
@@ -30,7 +30,7 @@ target_include_directories(datacollector PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src
 target_link_libraries(datacollector PRIVATE eclipse-paho-mqtt-c::paho-mqtt3a)
 
 # Create test executable
-file(GLOB_RECURSE TEST_SOURCES "tests/*.cpp")
+file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS "tests/*.cpp")
 add_executable(test_runner ${TEST_SOURCES} ${IMPL_SOURCES})
 target_include_directories(test_runner PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/tests)
 target_link_libraries(test_runner PRIVATE GTest::gtest_main)

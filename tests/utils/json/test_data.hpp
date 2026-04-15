@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include "utils/json/json_object.hpp"
+#include "utils/json/json_writer.hpp"
 
 namespace tests::utils::json {
 
@@ -30,6 +31,19 @@ public:
     const std::string& get_street() const { return _street; }
     const std::string& get_city() const { return _city; }
     std::int64_t get_zip_code() const { return _zip_code; }
+    std::string to_json() const {
+        util::json::json_writer writer;
+        write_json(writer);
+        return writer.get_json();
+    }
+
+    void write_json(util::json::json_writer& writer) const {
+        writer.start_object();
+            writer.write_property("street", _street);
+            writer.write_property("city", _city);
+            writer.write_property("zipCode", _zip_code);
+        writer.end_object();
+    }
 };
 
 class person {
@@ -60,6 +74,29 @@ public:
     double get_height() const { return _height; }
     const std::vector<std::string>& get_hobbies() const { return _hobbies; }
     const address& get_address() const { return _address; }
+
+    std::string to_json() const {
+        util::json::json_writer writer;
+        write_json(writer);
+        return writer.get_json();
+    }
+
+    void write_json(util::json::json_writer& writer) const {
+        writer.start_object();
+            writer.write_property("name", _name);
+            writer.write_property("age", _age);
+            writer.write_property("height", _height);
+            writer.write_property_name("hobbies");
+            writer.start_array();
+                for (const auto& hobby : _hobbies) {
+                    writer.write_value(hobby);
+                }
+            writer.end_array();
+            writer.write_object_property("address", [this](util::json::json_writer& w) {
+                _address.write_json(w);
+            });
+        writer.end_object();
+    }
 };
 
 } // namespace tests::utils::json
