@@ -45,6 +45,48 @@ const std::vector<std::string>& read_config::get_triggers() const
     return _triggers;
 }
 
+std::vector<std::string> read_config::validate() const
+{
+    std::vector<std::string> errors;
+
+    if (_name.empty())
+    {
+        errors.push_back("Read configuration name must not be empty.");
+    }
+
+    for (const auto& variable : _variables)
+    {
+        const auto variableErrors = variable.validate();
+        errors.insert(errors.end(), variableErrors.begin(), variableErrors.end());
+    }
+
+    for (const auto& triggerName : _triggers)
+    {
+        if (triggerName.empty())
+        {
+            errors.push_back("Read configuration '" + _name + "' contains an empty trigger reference.");
+        }
+    }
+
+    return errors;
+}
+
+std::vector<std::string> read_config::validate(const std::set<std::string>& availableTriggerNames) const
+{
+    std::vector<std::string> errors = validate();
+
+    for (const auto& triggerName : _triggers)
+    {
+        if (!triggerName.empty() && availableTriggerNames.find(triggerName) == availableTriggerNames.end())
+        {
+            errors.push_back(
+                "Read configuration '" + _name + "' references unknown trigger '" + triggerName + "'.");
+        }
+    }
+
+    return errors;
+}
+
 std::string read_config::to_json() const
 {
     util::json::json_writer writer;

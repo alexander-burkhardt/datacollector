@@ -1,5 +1,7 @@
 #include "data_collection_config.hpp"
 
+#include <set>
+
 #include "trigger_config_factory.hpp"
 
 namespace business::config::data_collection
@@ -45,6 +47,62 @@ const std::vector<std::shared_ptr<trigger_config>>& data_collection_config::get_
 const std::vector<std::shared_ptr<read_config>>& data_collection_config::get_reads() const
 {
     return _reads;
+}
+
+std::vector<std::string> data_collection_config::validate() const
+{
+    std::vector<std::string> errors;
+
+    if (_configurationName.empty())
+    {
+        errors.push_back("Configuration name must not be empty.");
+    }
+
+    std::set<std::string> availableTriggerNames;
+    for (const auto& trigger : _triggers)
+    {
+        if (!trigger)
+        {
+            errors.push_back(
+                "Configuration '" + _configurationName + "' contains a null trigger entry.");
+            continue;
+        }
+
+        const auto triggerErrors = trigger->validate();
+        errors.insert(errors.end(), triggerErrors.begin(), triggerErrors.end());
+
+        const auto [_, inserted] = availableTriggerNames.insert(trigger->get_trigger_name());
+        if (!inserted)
+        {
+            errors.push_back(
+                "Configuration '" + _configurationName + "' contains duplicate trigger name '" +
+                trigger->get_trigger_name() + "'.");
+        }
+    }
+
+    std::set<std::string> readNames;
+    for (const auto& read : _reads)
+    {
+        if (!read)
+        {
+            errors.push_back(
+                "Configuration '" + _configurationName + "' contains a null read entry.");
+            continue;
+        }
+
+        const auto readErrors = read->validate(availableTriggerNames);
+        errors.insert(errors.end(), readErrors.begin(), readErrors.end());
+
+        const auto [_, inserted] = readNames.insert(read->get_name());
+        if (!inserted)
+        {
+            errors.push_back(
+                "Configuration '" + _configurationName + "' contains duplicate read name '" +
+                read->get_name() + "'.");
+        }
+    }
+
+    return errors;
 }
 
 std::string data_collection_config::to_json() const

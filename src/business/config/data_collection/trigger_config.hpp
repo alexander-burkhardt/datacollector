@@ -2,6 +2,7 @@
 #define BUSINESS_CONFIG_DATA_COLLECTION_TRIGGER_CONFIG_HPP
 
 #include <string>
+#include <vector>
 
 #include "utils/json/json_object.hpp"
 #include "utils/json/json_writer.hpp"
@@ -30,6 +31,8 @@ public:
 
     const std::string& get_trigger_name() const;
     const std::string& get_trigger_type() const;
+
+    virtual std::vector<std::string> validate() const;
 
     std::string to_json() const;
 

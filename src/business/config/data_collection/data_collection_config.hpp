@@ -38,6 +38,8 @@ public:
     const std::vector<std::shared_ptr<trigger_config>>& get_triggers() const;
     const std::vector<std::shared_ptr<read_config>>& get_reads() const;
 
+    std::vector<std::string> validate() const;
+
     std::string to_json() const;
 
     void write_json(util::json::json_writer& writer) const;

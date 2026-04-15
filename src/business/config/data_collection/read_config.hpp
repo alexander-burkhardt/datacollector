@@ -1,6 +1,7 @@
 #ifndef BUSINESS_CONFIG_DATA_COLLECTION_READ_CONFIG_HPP
 #define BUSINESS_CONFIG_DATA_COLLECTION_READ_CONFIG_HPP
 
+#include <set>
 #include <string>
 #include <vector>
 
@@ -32,6 +33,9 @@ public:
     const std::string& get_name() const;
     const std::vector<variable_config>& get_variables() const;
     const std::vector<std::string>& get_triggers() const;
+
+    std::vector<std::string> validate() const;
+    std::vector<std::string> validate(const std::set<std::string>& availableTriggerNames) const;
 
     std::string to_json() const;
 

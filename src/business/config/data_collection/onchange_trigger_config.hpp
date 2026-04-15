@@ -29,6 +29,7 @@ public:
 
     const std::vector<std::string>& get_target_addresses() const;
 
+    std::vector<std::string> validate() const override;
     void write_json(util::json::json_writer& writer) const override;
 };
 

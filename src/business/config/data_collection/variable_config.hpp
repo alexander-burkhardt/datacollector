@@ -2,6 +2,7 @@
 #define BUSINESS_CONFIG_DATA_COLLECTION_VARIABLE_CONFIG_HPP
 
 #include <string>
+#include <vector>
 
 #include "utils/json/json_object.hpp"
 #include "utils/json/json_writer.hpp"
@@ -27,6 +28,8 @@ public:
 
     const std::string& get_variable_name() const;
     const std::string& get_target_address() const;
+
+    std::vector<std::string> validate() const;
 
     std::string to_json() const;
 

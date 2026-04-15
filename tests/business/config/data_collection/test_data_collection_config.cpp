@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <memory>
 #include <string>
 
@@ -52,6 +53,17 @@ std::string sample_config_json()
     )";
 }
 
+bool contains_message_fragment(const std::vector<std::string>& errors, const std::string& fragment)
+{
+    return std::any_of(
+        errors.begin(),
+        errors.end(),
+        [&fragment](const std::string& error)
+        {
+            return error.find(fragment) != std::string::npos;
+        });
+}
+
 } // namespace
 
 TEST(test_data_collection_config, deserialize_creates_correct_trigger_types)
@@ -61,6 +73,8 @@ TEST(test_data_collection_config, deserialize_creates_correct_trigger_types)
 
     const ::business::config::data_collection::data_collection_config config(json_value.as_object());
 
+    const auto errors = config.validate();
+    EXPECT_TRUE(errors.empty());
     EXPECT_EQ(config.get_configuration_name(), "MainConfig");
     ASSERT_EQ(config.get_triggers().size(), 2U);
     ASSERT_EQ(config.get_reads().size(), 1U);
@@ -101,12 +115,79 @@ TEST(test_data_collection_config, serialize_round_trip_preserves_configuration)
 
     const ::business::config::data_collection::data_collection_config round_trip_config(round_trip_value.as_object());
 
+    const auto errors = round_trip_config.validate();
+    EXPECT_TRUE(errors.empty());
     EXPECT_EQ(round_trip_config.get_configuration_name(), "MainConfig");
     ASSERT_EQ(round_trip_config.get_triggers().size(), 2U);
     ASSERT_EQ(round_trip_config.get_reads().size(), 1U);
     ASSERT_EQ(round_trip_config.get_reads()[0]->get_triggers().size(), 2U);
     EXPECT_EQ(round_trip_config.get_reads()[0]->get_triggers()[0], "TimerTrigger");
     EXPECT_EQ(round_trip_config.get_reads()[0]->get_triggers()[1], "ChangeTrigger");
+}
+
+TEST(test_data_collection_config, read_references_unknown_trigger_returns_validation_error)
+{
+    const std::string json_string = R"(
+    {
+        "configurationName": "BadConfig",
+        "triggers": [
+            {
+                "triggerName": "TimerTrigger",
+                "triggerType": "cyclic",
+                "frequencyInSeconds": 60
+            }
+        ],
+        "reads": [
+            {
+                "name": "MotorRead",
+                "triggers": ["MissingTrigger"],
+                "variables": [
+                    {
+                        "variableName": "MotorSpeed",
+                        "targetAddress": "DB10.DBD0"
+                    }
+                ]
+            }
+        ]
+    }
+    )";
+
+    const auto json_value = util::json::deserialize(json_string);
+    ASSERT_TRUE(json_value.is_object());
+
+    const ::business::config::data_collection::data_collection_config config(json_value.as_object());
+
+    const auto errors = config.validate();
+
+    EXPECT_FALSE(errors.empty());
+    EXPECT_TRUE(contains_message_fragment(errors, "MotorRead"));
+    EXPECT_TRUE(contains_message_fragment(errors, "MissingTrigger"));
+}
+
+TEST(test_data_collection_config, validate_collects_multiple_errors_in_one_pass)
+{
+    const auto first_trigger = std::make_shared<::business::config::data_collection::cyclic_trigger_config>("SharedTrigger", 0);
+    const auto second_trigger = std::make_shared<::business::config::data_collection::cyclic_trigger_config>("SharedTrigger", -5);
+    const auto invalid_read = std::make_shared<::business::config::data_collection::read_config>(
+        "",
+        std::vector<::business::config::data_collection::variable_config>{
+            ::business::config::data_collection::variable_config("", "")},
+        std::vector<std::string>{"", "MissingTrigger"});
+
+    const ::business::config::data_collection::data_collection_config config(
+        "",
+        {first_trigger, second_trigger},
+        {invalid_read});
+
+    const auto errors = config.validate();
+
+    EXPECT_GE(errors.size(), 6U);
+    EXPECT_TRUE(contains_message_fragment(errors, "Configuration name must not be empty"));
+    EXPECT_TRUE(contains_message_fragment(errors, "positive frequencyInSeconds"));
+    EXPECT_TRUE(contains_message_fragment(errors, "duplicate trigger name"));
+    EXPECT_TRUE(contains_message_fragment(errors, "Read configuration name must not be empty"));
+    EXPECT_TRUE(contains_message_fragment(errors, "empty trigger reference"));
+    EXPECT_TRUE(contains_message_fragment(errors, "unknown trigger 'MissingTrigger'"));
 }
 
 TEST(test_data_collection_config, unsupported_trigger_type_throws)

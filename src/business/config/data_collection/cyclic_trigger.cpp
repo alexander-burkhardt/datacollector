@@ -30,6 +30,19 @@ std::int32_t cyclic_trigger_config::get_frequency_in_seconds() const
     return _frequencyInSeconds;
 }
 
+std::vector<std::string> cyclic_trigger_config::validate() const
+{
+    std::vector<std::string> errors = trigger_config::validate();
+
+    if (_frequencyInSeconds <= 0)
+    {
+        errors.push_back(
+            "Trigger '" + get_trigger_name() + "' must have a positive frequencyInSeconds value.");
+    }
+
+    return errors;
+}
+
 void cyclic_trigger_config::write_json(util::json::json_writer& writer) const
 {
     writer.start_object();

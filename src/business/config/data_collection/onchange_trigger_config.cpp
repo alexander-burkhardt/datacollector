@@ -35,6 +35,22 @@ const std::vector<std::string>& onchange_trigger_config::get_target_addresses() 
     return _targetAddresses;
 }
 
+std::vector<std::string> onchange_trigger_config::validate() const
+{
+    std::vector<std::string> errors = trigger_config::validate();
+
+    for (const auto& targetAddress : _targetAddresses)
+    {
+        if (targetAddress.empty())
+        {
+            errors.push_back(
+                "Trigger '" + get_trigger_name() + "' contains an empty targetAddresses entry.");
+        }
+    }
+
+    return errors;
+}
+
 void onchange_trigger_config::write_json(util::json::json_writer& writer) const
 {
     writer.start_object();

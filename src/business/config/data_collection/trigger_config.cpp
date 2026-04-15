@@ -31,6 +31,23 @@ const std::string& trigger_config::get_trigger_type() const
     return _triggerType;
 }
 
+std::vector<std::string> trigger_config::validate() const
+{
+    std::vector<std::string> errors;
+
+    if (_triggerName.empty())
+    {
+        errors.push_back("Trigger name must not be empty.");
+    }
+
+    if (_triggerType.empty())
+    {
+        errors.push_back("Trigger '" + _triggerName + "' must define a triggerType.");
+    }
+
+    return errors;
+}
+
 std::string trigger_config::to_json() const
 {
     util::json::json_writer writer;

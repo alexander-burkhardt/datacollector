@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <string>
+#include <vector>
 
 #include "trigger_config.hpp"
 
@@ -28,6 +29,7 @@ public:
 
     std::int32_t get_frequency_in_seconds() const;
 
+    std::vector<std::string> validate() const override;
     void write_json(util::json::json_writer& writer) const override;
 };
 

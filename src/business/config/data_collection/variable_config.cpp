@@ -25,6 +25,23 @@ const std::string& variable_config::get_target_address() const
     return _targetAddress;
 }
 
+std::vector<std::string> variable_config::validate() const
+{
+    std::vector<std::string> errors;
+
+    if (_variableName.empty())
+    {
+        errors.push_back("Variable name must not be empty.");
+    }
+
+    if (_targetAddress.empty())
+    {
+        errors.push_back("Variable '" + _variableName + "' must define a targetAddress.");
+    }
+
+    return errors;
+}
+
 std::string variable_config::to_json() const
 {
     util::json::json_writer writer;
