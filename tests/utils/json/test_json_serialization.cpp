@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 
 #include "utils/json/json_deserializer.hpp"
+#include "utils/json/json_exception.hpp"
+#include "utils/json/json_writer.hpp"
 #include "test_data.hpp"
 
 namespace tests::utils::json
@@ -77,6 +79,72 @@ TEST(test_json_serialization, serialize_person_round_trip)
     EXPECT_EQ(address_object.get_string("street"), "123 Main St");
     EXPECT_EQ(address_object.get_string("city"), "Anytown");
     EXPECT_EQ(address_object.get_int("zipCode"), 12345);
+}
+
+TEST(test_json_serialization, property_writing_outside_object_throws)
+{
+    util::json::json_writer writer;
+
+    try
+    {
+        writer.write_property("name", "John Doe");
+        FAIL() << "Expected util::json::json_exception";
+    }
+    catch (const util::json::json_exception& ex)
+    {
+        const std::string message = ex.what();
+        EXPECT_NE(message.find("name"), std::string::npos);
+        EXPECT_NE(message.find("object"), std::string::npos);
+    }
+}
+
+TEST(test_json_serialization, value_writing_inside_object_without_property_throws)
+{
+    util::json::json_writer writer;
+    writer.start_object();
+
+    try
+    {
+        writer.write_value("John Doe");
+        FAIL() << "Expected util::json::json_exception";
+    }
+    catch (const util::json::json_exception& ex)
+    {
+        const std::string message = ex.what();
+        EXPECT_NE(message.find("property name"), std::string::npos);
+    }
+}
+
+TEST(test_json_serialization, ending_wrong_or_missing_scope_throws)
+{
+    util::json::json_writer writer;
+
+    EXPECT_THROW(writer.end_object(), util::json::json_exception);
+
+    writer.start_object();
+    writer.write_property_name("address");
+    try
+    {
+        writer.end_object();
+        FAIL() << "Expected util::json::json_exception";
+    }
+    catch (const util::json::json_exception& ex)
+    {
+        const std::string message = ex.what();
+        EXPECT_NE(message.find("address"), std::string::npos);
+        EXPECT_NE(message.find("value"), std::string::npos);
+    }
+}
+
+TEST(test_json_serialization, nested_object_or_array_inside_object_requires_property_name)
+{
+    util::json::json_writer writer_for_object;
+    writer_for_object.start_object();
+    EXPECT_THROW(writer_for_object.start_object(), util::json::json_exception);
+
+    util::json::json_writer writer_for_array;
+    writer_for_array.start_object();
+    EXPECT_THROW(writer_for_array.start_array(), util::json::json_exception);
 }
 
 } // namespace tests::utils::json

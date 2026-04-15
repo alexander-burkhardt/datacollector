@@ -61,12 +61,14 @@ private:
         scope_type type;
         bool first_entry;
         bool expecting_value;
+        std::string current_property_name;
     };
 
     std::string json_;
     std::vector<scope_state> stack_;
 
     void before_value();
+    std::string current_property_context() const;
     void write_escaped_string(const std::string& value);
 };
 

@@ -86,12 +86,11 @@ public:
             writer.write_property("name", _name);
             writer.write_property("age", _age);
             writer.write_property("height", _height);
-            writer.write_property_name("hobbies");
-            writer.start_array();
+            writer.write_array_property("hobbies", [this](util::json::json_writer& w) {
                 for (const auto& hobby : _hobbies) {
-                    writer.write_value(hobby);
+                    w.write_value(hobby);
                 }
-            writer.end_array();
+            });
             writer.write_object_property("address", [this](util::json::json_writer& w) {
                 _address.write_json(w);
             });

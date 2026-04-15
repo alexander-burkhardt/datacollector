@@ -13,7 +13,7 @@ void json_writer::start_object()
 {
     before_value();
     json_ += "{";
-    stack_.push_back({ scope_type::object, true, false });
+    stack_.push_back({ scope_type::object, true, false, "" });
 }
 
 void json_writer::end_object()
@@ -24,7 +24,7 @@ void json_writer::end_object()
     }
     if (stack_.back().expecting_value)
     {
-        throw json_exception("JSON writer expected a value for the current property");
+        throw json_exception("JSON writer expected a value for property '" + stack_.back().current_property_name + "'");
     }
 
     stack_.pop_back();
@@ -35,7 +35,7 @@ void json_writer::start_array()
 {
     before_value();
     json_ += "[";
-    stack_.push_back({ scope_type::array, true, false });
+    stack_.push_back({ scope_type::array, true, false, "" });
 }
 
 void json_writer::end_array()
@@ -53,13 +53,13 @@ void json_writer::write_property_name(const std::string& name)
 {
     if (stack_.empty() || stack_.back().type != scope_type::object)
     {
-        throw json_exception("JSON property names can only be written inside an object");
+        throw json_exception("JSON property '" + name + "' can only be written inside an object");
     }
 
     auto& state = stack_.back();
     if (state.expecting_value)
     {
-        throw json_exception("JSON writer expected a property value before another property name");
+        throw json_exception("JSON writer expected a value for property '" + state.current_property_name + "' before another property name");
     }
 
     if (!state.first_entry)
@@ -71,6 +71,7 @@ void json_writer::write_property_name(const std::string& name)
     write_escaped_string(name);
     json_ += ":";
     state.expecting_value = true;
+    state.current_property_name = name;
 }
 
 void json_writer::write_property(const std::string& name, const std::string& value)
@@ -145,10 +146,11 @@ void json_writer::before_value()
     {
         if (!state.expecting_value)
         {
-            throw json_exception("JSON writer expected a property name before the value");
+            throw json_exception("JSON writer expected a property name before the value" + current_property_context());
         }
 
         state.expecting_value = false;
+        state.current_property_name.clear();
         return;
     }
 
@@ -157,6 +159,16 @@ void json_writer::before_value()
         json_ += ",";
     }
     state.first_entry = false;
+}
+
+std::string json_writer::current_property_context() const
+{
+    if (!stack_.empty() && !stack_.back().current_property_name.empty())
+    {
+        return " while processing property '" + stack_.back().current_property_name + "'";
+    }
+
+    return std::string();
 }
 
 void json_writer::write_escaped_string(const std::string& value)
